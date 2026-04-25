@@ -1,0 +1,11 @@
+# --- Core Logic & Data Modeling ---
+pydantic>=2.10.0            # Rock-solid data validation for Wrestler stats
+sqlalchemy>=2.0.0           # Database ORM (way better than raw SQL for long-term growth)
+
+# --- The API Bridge (Unity Connection) ---
+fastapi>=0.115.0            # The 'Bridge' to your Unity Frontend
+uvicorn[standard]           # High-performance ASGI server to run FastAPI
+
+# --- Utilities & Testing ---
+pytest>=8.0.0               # To make sure our match logic actually works!
+python-dotenv>=1.0.0        # To manage secret settings (if we add them later) 

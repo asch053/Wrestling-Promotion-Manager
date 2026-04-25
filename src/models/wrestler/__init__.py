@@ -1,0 +1,1 @@
+from .wrestler import Wrestler, WeightClass
