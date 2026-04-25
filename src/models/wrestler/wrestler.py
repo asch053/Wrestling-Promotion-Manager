@@ -1,34 +1,68 @@
-from pydantic import BaseModel, Field, field_validator
-from typing import Optional
+from enum import Enum
+from pydantic import BaseModel, Field
+from typing import Set, Optional, Dict
+from uuid import UUID
+from .contract import Contract
+from .injury import Injury
 
-class WrestlerBase(BaseModel):
-    """
-    The fundamental blueprint for every worker in your promotion.
-    """
-    name: str = Field(..., min_length=2, max_length=50)
-    age: int = Field(..., ge=18, le=65)
-    weight: float = Field(..., ge=50.0, le=150.0)  # in kg
-    height: float = Field(..., ge=150.0, le=210.0)  # in cms
-    
-    # Physical Stats
-    strength: int = Field(default=50, ge=0, le=100)
-    agility: int = Field(default=50, ge=0, le=100)
-    stamina: int = Field(default=50, ge=0, le=100)
-    
-    # Performance Stats
-    charisma: int = Field(default=50, ge=0, le=100)
-    mic_skill: int = Field(default=50, ge=0, le=100)
-    heat: int = Field(default=50, ge=0, le=100)
-    pop: int = Field(default=50, ge=0, le=100)
-    
-    # Career Stats
-    overness: int = Field(default=10, ge=0, le=100) # Popularity
-    momentum: int = Field(default=50, ge=0, le=100) # Current 'Heat'
-    is_injured: bool = False
-    
+class Alignment(str, Enum):
+    FACE = "FACE"
+    HEEL = "HEEL"
+    TWEENER = "TWEENER"
+
+class WrestlerStyle(str, Enum):
+    HEAVY_HITTER = "HEAVY_HITTER"
+    GRAPPLER = "GRAPPLER"
+    HIGH_FLYER = "HIGH_FLYER"
+    BRAWLER = "BRAWLER"
+    SHOWMAN = "SHOWMAN"
+    DIRTY_TRICKS = "DIRTY_TRICKS"
+    MEAN_STREAK = "MEAN_STREAK"
+    # Future styles are additive — append here without touching any other logic
+
+class InRingSkill(BaseModel):
+    strength: int = Field(ge=0, le=100)
+    agility: int = Field(ge=0, le=100)
+    stamina: int = Field(ge=0, le=100)
+
+class Psychology(BaseModel):
+    work_rate: int = Field(ge=0, le=100)
+    selling: int = Field(ge=0, le=100)
+    intelligence: int = Field(ge=0, le=100, default=50)
+
+class Backstage(BaseModel):
+    ego: int = Field(ge=0, le=100)
+    professionalism: int = Field(ge=0, le=100)
+
+class Popularity(BaseModel):
+    hype: int = Field(ge=0, le=100, default=50)
+    heat: int = Field(ge=0, le=100, default=50)
+    pop: int = Field(ge=0, le=100, default=50)
+
+class Wrestler(BaseModel):
+    name: str
+    popularity: Popularity = Field(default_factory=Popularity)
+    in_ring: InRingSkill
+    psychology: Psychology
+    backstage: Backstage
+    contract: Optional[Contract] = None
+    moveset: Set[UUID] = Field(default_factory=set)
+    friendships: Dict[UUID, int] = Field(default_factory=dict)
+    rivalries: Dict[UUID, int] = Field(default_factory=dict)
+    faction_id: Optional[UUID] = None
+    morale: int = Field(ge=0, le=100, default=50)
+    wins: int = 0
+    losses: int = 0
+    fatigue: int = Field(ge=0, le=100, default=0)
+    injury_status: Optional[Injury] = None
+    style: Optional[WrestlerStyle] = None
+
     @property
-    def star_power(self) -> float:
-        """Calculates the worker's drawing potential."""
-        return (self.charisma * 0.6) + (self.overness * 0.4)
-
-# TODO: add additional functions for 'WrestlerSkills', 'WrestlerHistory', FanIntreration, WrestlerPopularity, etc.
+    def alignment(self) -> Alignment:
+        margin = abs(self.popularity.pop - self.popularity.heat)
+        if margin <= 20 and self.popularity.hype >= 70:
+            return Alignment.TWEENER
+        elif self.popularity.pop >= self.popularity.heat:
+            return Alignment.FACE
+        else:
+            return Alignment.HEEL
