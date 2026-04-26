@@ -56,6 +56,7 @@ def test_financial_engine_profit(sample_company):
     )
     
     initial_balance = sample_company.bank_balance
+    sample_company.game_state.current_day = 2
     report = process_event_finances(sample_company, event)
     
     assert report.net_profit != 0
@@ -63,6 +64,7 @@ def test_financial_engine_profit(sample_company):
     assert len(sample_company.past_events) == 1
 
 def test_staleness_penalty_and_travel(sample_company):
+    sample_company.game_state.current_day = 2
     event1 = Event(name="Show 1", location="Chicago", scale=EventScale.HOUSE_SHOW, match_reports=[])
     report1 = process_event_finances(sample_company, event1)
     
@@ -81,8 +83,9 @@ def test_staleness_penalty_and_travel(sample_company):
 
 def test_merch_commission(sample_company):
     event = Event(name="Show", location="NY", scale=EventScale.HOUSE_SHOW, match_reports=[])
+    sample_company.game_state.current_day = 2
     report = process_event_finances(sample_company, event)
     
     # W1 hype 100 * 50 = 5000 merch. cut = 0.5 -> 2500
-    # W2 hype 10 * 50 = 500 merch. cut = 0.05 -> 25
-    assert report.expense_breakdown["talent"] == 5000 + 500 + 2500 + 25
+    # W2 hype 10 * 60 (Tweener bonus) = 600 merch. cut = 0.05 -> 30
+    assert report.expense_breakdown["talent"] == 5500 + 2500 + 30

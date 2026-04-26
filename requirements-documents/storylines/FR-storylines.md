@@ -21,13 +21,13 @@ A wrestling promotion isn't just a series of random athletic contests; it's a so
 - **FR-7.2.0 - Storyline Planned Outcomes**: Implement outcome enums: `TURN_FACE`, `TURN_HEEL`, `PUSH_STAR`, `BUILD_RIVALRY`.
 - **FR-7.3.0 - Match Simulator Impact**: In `match_simulator.py`, if a `storyline_id` is present, the match's starting `crowd_excitement` is derived from the storyline's excitement rather than the default `50`. Star Ratings dynamically shift the storyline's ongoing excitement.
 - **FR-7.4.0 - Storyline Decay**: If a storyline is not featured on an Event, its excitement decays. 
-- **FR-7.5.0 - The Payoff Mechanic**: Introduce `conclude_storyline()` logic. 
-  - Resolves the `planned_outcome`. (e.g., `TURN_HEEL` deletes friendships and sets rivalry to 100 for the target, while changing their alignment. `PUSH_STAR` applies a massive permanent Hype boost to the winner based on the final excitement).
+- **FR-7.5.0 - The Payoff Mechanic**: Introduce `execute_payoff()` logic. 
+  - Resolves the `planned_outcome`. (e.g., `TURN_HEEL` deletes friendships and sets rivalry to 100 for the target, while changing their kayfabe_status. `PUSH_STAR` applies a massive permanent Hype boost to the winner based on the final excitement).
   - "Cashes in" the final excitement, giving a lump sum boost to the `Company.current_excitement` for future ticket sales.
 
 **Acceptance Criteria**:
 - A match attached to an 80-excitement Storyline starts the simulation with a hot crowd (80) rather than a dead crowd (50).
-- Concluding a `TURN_HEEL` storyline successfully changes the wrestler's alignment to Heel and destroys their friendships with Faces.
+- Concluding a `TURN_HEEL` storyline successfully changes the wrestler's kayfabe_status to Heel and destroys their friendships with Faces.
 - A 5-star match in an active storyline raises the storyline's excitement for the next week's show.
 
 ## Logic Blueprint

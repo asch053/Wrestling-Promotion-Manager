@@ -5,6 +5,7 @@ from src.models.wrestler.wrestler import Wrestler
 from src.models.promotion.storyline import Storyline
 from src.models.promotion.championship import Championship, ChampionshipTier
 from src.models.promotion.dojo import Dojo
+from src.models.game_state import GameState
 
 class Company(BaseModel):
     name: str
@@ -18,6 +19,7 @@ class Company(BaseModel):
     base_excitement_modifier: float = 0.0
     medical_staff_level: int = Field(ge=1, le=5, default=1)
     stipulation_usage: Dict[str, int] = Field(default_factory=dict)
+    game_state: GameState = Field(default_factory=GameState)
 
     def calculate_current_hype(self) -> float:
         total_hype = sum(w.popularity.hype for w in self.current_roster)

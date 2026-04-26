@@ -6,7 +6,7 @@ The locker room is as dangerous as the ring. Egos clash, grudges fester, and a d
 
 **Feature ID**: F-008
 **Feature Name**: Backstage Politics & Locker Room Morale
-**Description**: Every wrestler tracks a `morale` stat (0-100) that fluctuates based on booking success, storyline status, financial fairness, and backstage relationships. When morale is low and ego is high, wrestlers can trigger "Backstage Incidents" that sabotage the show, poison their faction, or damage the company's public image. Morale also acts as a multiplier on in-ring Work Rate and a negotiation weight for contract re-signing.
+**Description**: Every wrestler tracks a `morale` stat (0-100) that fluctuates based on booking success, storyline status, financial fairness, and backstage relationships. When morale is low and ego is high, wrestlers can trigger "Backstage Incidents" that sabotage the show, poison their faction, or selling_burden the company's public image. Morale also acts as a multiplier on in-ring Work Rate and a negotiation weight for contract re-signing.
 
 **User Stories**:
 - As a Booker, I need to track the morale of every wrestler on my roster. Winning builds confidence; losing breaks it—especially for big egos.

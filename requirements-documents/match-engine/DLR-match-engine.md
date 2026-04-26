@@ -4,9 +4,9 @@
 
 | DLR ID | Linked HLR ID | Technical Requirement Explanation | Confirmation Test Case |
 | :--- | :--- | :--- | :--- |
-| *DLR-3.1.1* | *FR-3.1.0* | Implement `MatchState` & `WrestlerState` Pydantic models. Must contain `health: int` and `stamina: int` (initialized from `Wrestler.in_ring.stamina` and `100` base health). | Verify successful instantiation of MatchState. |
+| *DLR-3.1.1* | *FR-3.1.0* | Implement `MatchState` & `WrestlerState` Pydantic models. Must contain `integrity: int` and `stamina: int` (initialized from `Wrestler.in_ring.stamina` and `100` base integrity). | Verify successful instantiation of MatchState. |
 | *DLR-3.1.2* | *FR-3.1.0* | Implement `MatchReport` Pydantic model with `play_by_play: List[str]` and `star_rating: float`. | Verify instantiation of MatchReport. |
-| *DLR-3.2.1* | *FR-3.2.0* | `simulate_match` STRICT logic: loop through `expected_runsheet.spots`. Deduct stamina from attacker, apply damage to defender. | Provide a STRICT booking sheet, assert the resulting `play_by_play` length matches the runsheet length + 1 (the finish). |
+| *DLR-3.2.1* | *FR-3.2.0* | `simulate_match` STRICT logic: loop through `expected_runsheet.spots`. Deduct stamina from attacker, apply selling_burden to defender. | Provide a STRICT booking sheet, assert the resulting `play_by_play` length matches the runsheet length + 1 (the finish). |
 | *DLR-3.2.2* | *FR-3.2.0* | `simulate_match` CALLED_IN_RING logic: Use `random.choice` on the attacking wrestler's `moveset` to generate 5 to 10 spots dynamically. | Provide CALLED_IN_RING sheet, assert play_by_play length is between 6 and 11. |
 | *DLR-3.4.1* | *FR-3.4.0* | Finish logic: The final entry in the `play_by_play` list must explicitly declare the `designated_winner` as the victor. | Assert the last string in `play_by_play` contains the `designated_winner`'s name. |
 | *DLR-3.5.1* | *FR-3.5.0* | Star Rating Math: `Base(2.0) + (Avg Work Rate / 100) * 1.5 + (Total Heat / 100) * 1.5`. Max cap at 5.0. Deduct 0.5 if any stamina goes < 0. | Execute match with known stats, assert `star_rating` equals the calculated mathematical expectation. |
@@ -19,7 +19,7 @@
   - `src/engine/match_simulator.py` [NEW]
 - **Data Structures**:
   - `match_state.py`:
-    - `class WrestlerState(BaseModel)`: Tracks `health` and `stamina`.
+    - `class WrestlerState(BaseModel)`: Tracks `integrity` and `stamina`.
     - `class MatchState(BaseModel)`: Contains `wrestlers: Dict[UUID, WrestlerState]`.
   - `match_report.py`:
     - `class MatchReport(BaseModel)`: `play_by_play: List[str]`, `star_rating: float`.
@@ -29,7 +29,7 @@
   3. For each turn:
      - Determine attacker/defender (simple alternation for MVP).
      - Select move (from runsheet or dynamically via `random`).
-     - Apply math: Deduct `Move.stamina_cost` from attacker, deduct `Move.damage` from defender.
+     - Apply math: Deduct `Move.stamina_cost` from attacker, deduct `Move.selling_burden` from defender.
      - Append narrative string to `play_by_play`.
      - Add `Move.heat_generation` to total match heat tracker.
   4. End loop. Append Finish spot narrative for the `designated_winner`.

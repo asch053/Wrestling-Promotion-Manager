@@ -167,7 +167,7 @@ def test_ladder_skilled_wrestler_gets_bonus(high_flyer, brawler):
     from src.models.wrestler.moveset import Move, MoveType
     move_id = uuid4()
     move = Move(name="Crossbody", move_type=MoveType.AERIAL, heat_generation=20,
-                stamina_cost=10, damage=15)
+                stamina_cost=10, selling_burden=15)
     
     high_flyer_copy = high_flyer.model_copy()
     high_flyer_copy.moveset = {move_id}
@@ -215,6 +215,7 @@ def test_stipulation_usage_counter_increments(company):
     
     event = Event(name="House Show", location="Anywhere", scale=EventScale.HOUSE_SHOW)
     
+    company.game_state.current_day = 2
     for _ in range(3):
         e = Event(name="Show", location="Anywhere", scale=EventScale.HOUSE_SHOW)
         process_event_finances(company, e, MatchStipulation.HARDCORE)
@@ -227,6 +228,7 @@ def test_staleness_penalty_on_4th_use(company):
     
     event = Event(name="Show", location="Anywhere", scale=EventScale.HOUSE_SHOW)
     
+    company.game_state.current_day = 2
     # 3 HARDCORE events (no penalty)
     for _ in range(3):
         process_event_finances(company, event, MatchStipulation.HARDCORE)
@@ -244,6 +246,7 @@ def test_staleness_counter_resets_on_stipulation_change(company):
     
     event = Event(name="Show", location="Anywhere", scale=EventScale.HOUSE_SHOW)
     
+    company.game_state.current_day = 2
     for _ in range(3):
         process_event_finances(company, event, MatchStipulation.HARDCORE)
     

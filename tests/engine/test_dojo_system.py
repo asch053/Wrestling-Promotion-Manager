@@ -175,7 +175,7 @@ def test_weekly_training_growth(lucha_dojo):
     lucha_dojo.students = [rookie]
     
     initial_agility = rookie.in_ring.agility
-    process_weekly_training(lucha_dojo)
+    process_weekly_training(lucha_dojo, current_day=7)
     
     # LUCHA trains agility — should have increased
     assert rookie.in_ring.agility > initial_agility
@@ -189,7 +189,7 @@ def test_weekly_training_max_stats(lucha_dojo):
         backstage=Backstage(ego=99, professionalism=99),
     )
     lucha_dojo.students = [rookie]
-    process_weekly_training(lucha_dojo)
+    process_weekly_training(lucha_dojo, current_day=7)
     assert rookie.in_ring.agility <= 100
 
 def test_training_targets_correct_stats(strong_dojo):
@@ -204,7 +204,7 @@ def test_training_targets_correct_stats(strong_dojo):
     initial_agility = rookie.in_ring.agility
     initial_strength = rookie.in_ring.strength
     
-    process_weekly_training(strong_dojo)
+    process_weekly_training(strong_dojo, current_day=7)
     
     assert rookie.in_ring.strength > initial_strength  # grew
     assert rookie.in_ring.agility == initial_agility   # untouched
@@ -212,7 +212,7 @@ def test_training_targets_correct_stats(strong_dojo):
 def test_training_empty_dojo(lucha_dojo):
     """Training with 0 students should not raise errors."""
     lucha_dojo.students = []
-    process_weekly_training(lucha_dojo)  # Should not raise
+    process_weekly_training(lucha_dojo, current_day=7)  # Should not raise
 
 
 # --- XP & Prestige Tests ---

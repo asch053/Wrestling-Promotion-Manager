@@ -205,7 +205,7 @@ def test_simulator_prestige_update(title_setup):
     roster_dict = {w1_id: w1, w2_id: w2}
     
     m1_id = uuid4()
-    move = Move(name="Slam", damage=10, stamina_cost=5, heat_generation=20, move_type=MoveType.GRAPPLE)
+    move = Move(name="Slam", selling_burden=10, stamina_cost=5, heat_generation=20, move_type=MoveType.GRAPPLE)
     moves = {m1_id: move}
     w1.moveset = {m1_id}
     w2.moveset = {m1_id}

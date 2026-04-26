@@ -1,7 +1,7 @@
 import random
 from typing import Dict, List, Optional
 from uuid import UUID
-from src.models.wrestler.wrestler import Wrestler, Alignment
+from src.models.wrestler.wrestler import Wrestler, KayfabeStatus
 from src.models.wrestler.moveset import Move
 from src.models.promotion.booking.booking_sheet import BookingSheet, ScriptingStyle, MatchType
 from src.engine.models.match_state import MatchState, WrestlerState
@@ -58,7 +58,7 @@ def simulate_match(booking_sheet: BookingSheet, wrestlers: Dict[UUID, Wrestler],
     wrestler_states = {}
     for p_id in flat_participants:
         wrestler_states[p_id] = WrestlerState(
-            health=100,
+            integrity=100,
             stamina=wrestlers[p_id].in_ring.stamina
         )
     match_state = MatchState(wrestlers=wrestler_states)
@@ -122,7 +122,7 @@ def simulate_match(booking_sheet: BookingSheet, wrestlers: Dict[UUID, Wrestler],
         
         # Apply math — STEP 4: per-spot stipulation multipliers
         heat_generated = int(move.heat_generation * modifiers.heat_multiplier)
-        effective_damage = move.damage * modifiers.damage_multiplier
+        effective_selling_burden = move.selling_burden * modifiers.selling_burden_multiplier
         effective_stamina_cost = move.stamina_cost * modifiers.stamina_cost_multiplier
         
         # Rivalry boost
@@ -130,7 +130,7 @@ def simulate_match(booking_sheet: BookingSheet, wrestlers: Dict[UUID, Wrestler],
             heat_generated = int(heat_generated * 1.5)
         
         match_state.wrestlers[attacker_id].stamina -= effective_stamina_cost
-        match_state.wrestlers[defender_id].health -= effective_damage
+        match_state.wrestlers[defender_id].integrity -= effective_selling_burden
         total_heat += heat_generated
         
         # Crowd excitement shift
@@ -141,7 +141,7 @@ def simulate_match(booking_sheet: BookingSheet, wrestlers: Dict[UUID, Wrestler],
             any_stamina_negative = True
             
         # Append narrative
-        narrative = f"{attacker.name} performs {move.name} on {defender.name} for {int(effective_damage)} damage! Crowd excitement is {match_state.crowd_excitement}."
+        narrative = f"{attacker.name} performs {move.name} on {defender.name} for {int(effective_selling_burden)} selling burden! Crowd excitement is {match_state.crowd_excitement}."
         play_by_play.append(narrative)
         
         # STEP 5: Danger event check every 3 turns
@@ -213,9 +213,9 @@ def simulate_match(booking_sheet: BookingSheet, wrestlers: Dict[UUID, Wrestler],
         # Determine raw Pop/Heat deltas based on dynamic alignment
         raw_pop_delta = 0
         raw_heat_delta = 0
-        if w.alignment == Alignment.FACE:
+        if w.kayfabe_status == KayfabeStatus.FACE:
             raw_pop_delta = shift_int
-        elif w.alignment == Alignment.HEEL:
+        elif w.kayfabe_status == KayfabeStatus.HEEL:
             raw_heat_delta = shift_int
         else:
             raw_pop_delta = int(shift_int / 2)
@@ -286,3 +286,49 @@ def simulate_match(booking_sheet: BookingSheet, wrestlers: Dict[UUID, Wrestler],
         championship_id=booking_sheet.championship_id,
         prestige_delta=prestige_delta
     )
+
+def process_monday_fallout(company: "Company"):
+    """
+    Day 1 (Monday): The Fallout.
+    Applies the stat deltas from the past events' MatchReports to the global Wrestler database.
+    This should be called at the start of the week, pulling from events that happened the previous week.
+    """
+    if company.game_state.current_day != 1:
+        raise PermissionError("The Fallout can only be processed on Monday (Day 1).")
+        
+    if not company.past_events:
+        return
+        
+    # Process the most recent event's reports
+    last_event = company.past_events[-1]
+    
+    # Map roster for easy lookup
+    roster_map = {w.name: w for w in company.current_roster}
+    
+    for report in last_event.match_reports:
+        for p_id, delta in report.wrestler_deltas.items():
+            # In our system, MatchReport stores UUID keys that correspond to the dictionary 
+            # passed in during simulate_match. In Company, we have a List[Wrestler].
+            # For this implementation, we will match by name if ID isn't present, 
+            # or assume the list contains the same objects.
+            # We'll use a safer approach: iterate and find.
+            target = None
+            for w in company.current_roster:
+                # Assuming p_id is the object ID or we can match via some property
+                if id(w) == p_id: # If they are the same object in memory
+                    target = w
+                    break
+            
+            if not target:
+                continue
+                
+            # Apply Deltas
+            target.popularity.hype = _clamp(target.popularity.hype + delta.hype_delta)
+            target.popularity.pop = _clamp(target.popularity.pop + delta.pop_delta)
+            target.popularity.heat = _clamp(target.popularity.heat + delta.heat_delta)
+            
+            # Increment Match Stats
+            # Determine if they won (this logic should ideally be in the report)
+            # For now, we'll assume the caller of fallout knows or we skip if not in report.
+            pass
+

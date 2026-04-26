@@ -1,6 +1,6 @@
 import pytest
 from uuid import uuid4
-from src.models.wrestler.wrestler import Wrestler, InRingSkill, Psychology, Backstage, Alignment, Popularity
+from src.models.wrestler.wrestler import Wrestler, InRingSkill, Psychology, Backstage, KayfabeStatus, Popularity
 from src.models.wrestler.moveset import Move, MoveType
 from src.models.promotion.booking.booking_sheet import BookingSheet, ScriptingStyle, MatchType
 from src.models.promotion.booking.runsheet import Runsheet
@@ -51,8 +51,8 @@ def base_data():
         moveset={m2_id}
     )
     
-    move1 = Move(name="Slam", damage=10, stamina_cost=5, heat_generation=20, move_type=MoveType.GRAPPLE)
-    move2 = Move(name="Kick", damage=5, stamina_cost=2, heat_generation=5, move_type=MoveType.STRIKE)
+    move1 = Move(name="Slam", selling_burden=10, stamina_cost=5, heat_generation=20, move_type=MoveType.GRAPPLE)
+    move2 = Move(name="Kick", selling_burden=5, stamina_cost=2, heat_generation=5, move_type=MoveType.STRIKE)
     
     return {
         "w1_id": w1_id,

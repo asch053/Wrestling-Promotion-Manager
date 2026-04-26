@@ -25,7 +25,7 @@ The Core Athlete & Move-set Library is the foundational data model for the Wrest
 
 ## Logic Blueprint
 
-- **Stat Interactions**: The 'Stamina Cost' of a move should eventually reduce the 'Stamina' stat of the executing wrestler during a match. 'Damage' should reduce the opponent's stamina/health.
+- **Stat Interactions**: The 'Stamina Cost' of a move should eventually reduce the 'Stamina' stat of the executing wrestler during a match. 'Damage' should reduce the opponent's stamina/integrity.
 - **Psychology Math**: A move's 'Heat Generation' combined with the executor's 'Work Rate' and the opponent's 'Selling' will dictate the crowd reaction (Star Rating).
 - **Backstage Engine**: 'Ego' and 'Professionalism' will be used outside the ring to determine compliance with booking decisions (e.g., refusing to lose).
 
@@ -37,7 +37,7 @@ The Core Athlete & Move-set Library is the foundational data model for the Wrest
 ## Agent Assignments
 
 - **To Road Agent**: Draft the Detailed Logic Requirements (DLR) in `./requirements-documents/wrestler-model/DLR-wrestler-model.md`. Define the Pydantic schemas or Python dataclasses for `Wrestler` and `Move`. Define the Enum for `MoveType`. Provide the Traceability Table and set up the confirmation test cases for the Referees.
-- **To The Booker**: *(Future Step)* Prepare to use these stats in the match simulation engine. Consider how a 'Finisher' move type bypasses normal damage calculations.
+- **To The Booker**: *(Future Step)* Prepare to use these stats in the match simulation engine. Consider how a 'Finisher' move type bypasses normal selling_burden calculations.
 - **To The Money Man**: *(Future Step)* Determine how these models will map to the SQLite database (e.g., a `Wrestler` table, a `Move` table, and a many-to-many `wrestler_moves` association table).
 
 ## Referee Note

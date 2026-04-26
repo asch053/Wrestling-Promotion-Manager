@@ -2,8 +2,8 @@ import pytest
 from uuid import uuid4
 from src.models.promotion.storyline import Storyline, PlannedOutcome
 from src.models.promotion.company import Company
-from src.models.wrestler.wrestler import Wrestler, Alignment, InRingSkill, Psychology, Backstage, Popularity
-from src.engine.storyline_manager import decay_inactive_storylines, conclude_storyline
+from src.models.wrestler.wrestler import Wrestler, KayfabeStatus, InRingSkill, Psychology, Backstage, Popularity
+from src.engine.storyline_manager import decay_inactive_storylines, execute_payoff
 from src.models.promotion.event import Event, EventScale
 from src.engine.models.match_report import MatchReport
 
@@ -64,7 +64,7 @@ def test_payoff_turn_heel(base_data):
     # Make w2 a Face (high Pop, low Heat) so we can turn them Heel
     w2.popularity.pop = 80
     w2.popularity.heat = 0
-    assert w2.alignment == Alignment.FACE
+    assert w2.kayfabe_status == KayfabeStatus.FACE
     
     # They are friends
     w1.friendships[w2_id] = 100
@@ -81,7 +81,8 @@ def test_payoff_turn_heel(base_data):
     )
     company.storylines.append(s)
     
-    conclude_storyline(company, roster, s)
+    company.game_state.current_day = 4
+    execute_payoff(company, roster, s)
     
     # Check outcomes
     assert s.is_active is False
@@ -111,7 +112,7 @@ def test_payoff_turn_heel_dramatic(base_data):
     # Make w2 a marginal Face (Pop just above Heat)
     w2.popularity.pop = 40
     w2.popularity.heat = 10
-    assert w2.alignment == Alignment.FACE
+    assert w2.kayfabe_status == KayfabeStatus.FACE
     
     w1.friendships[w2_id] = 100
     w2.friendships[w1_id] = 100
@@ -126,12 +127,13 @@ def test_payoff_turn_heel_dramatic(base_data):
         target_wrestler=w2_id
     )
     
-    conclude_storyline(company, roster, s)
+    company.game_state.current_day = 4
+    execute_payoff(company, roster, s)
     
     # Pop: 40 - 30 = 10, Heat: 10 + 40 = 50. Heat > Pop -> HEEL
     assert w2.popularity.pop == 10
     assert w2.popularity.heat == 50
-    assert w2.alignment == Alignment.HEEL
+    assert w2.kayfabe_status == KayfabeStatus.HEEL
 
 def test_payoff_push_star(base_data):
     company, roster, w1_id, w2_id = base_data
@@ -147,6 +149,7 @@ def test_payoff_push_star(base_data):
         target_wrestler=w1_id
     )
     
-    conclude_storyline(company, roster, s)
+    company.game_state.current_day = 4
+    execute_payoff(company, roster, s)
     
     assert w1.popularity.hype == 100 # 50 + 50

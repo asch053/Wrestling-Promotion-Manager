@@ -1,7 +1,7 @@
 import pytest
 import random
 from uuid import uuid4
-from src.models.wrestler.wrestler import Wrestler, Alignment, InRingSkill, Psychology, Backstage, Popularity
+from src.models.wrestler.wrestler import Wrestler, KayfabeStatus, InRingSkill, Psychology, Backstage, Popularity
 from src.models.wrestler.contract import Contract
 from src.models.wrestler.moveset import Move, MoveType
 from src.models.promotion.company import Company
@@ -103,6 +103,7 @@ def test_incident_trigger_threshold(roster):
     _, w1, w2_id, w2, company, roster_dict = roster
     # w1 has ego=100, but prof=80 -> should NOT trigger (prof must be < 40)
     w1.morale = 10
+    company.game_state.current_day = 6
     incidents = generate_incidents(company, roster_dict)
     assert len(incidents) == 0
     
@@ -110,6 +111,7 @@ def test_incident_trigger_threshold(roster):
     w1.backstage.professionalism = 20
     w1.morale = 10
     random.seed(42)
+    company.game_state.current_day = 6
     incidents = generate_incidents(company, roster_dict)
     assert len(incidents) == 1
 
@@ -147,7 +149,7 @@ def test_refusal_to_lose(roster):
     w1_id, w1, w2_id, w2, _, roster_dict = roster
     
     m1_id = uuid4()
-    move = Move(name="Slam", damage=10, stamina_cost=5, heat_generation=20, move_type=MoveType.GRAPPLE)
+    move = Move(name="Slam", selling_burden=10, stamina_cost=5, heat_generation=20, move_type=MoveType.GRAPPLE)
     moves = {m1_id: move}
     w1.moveset = {m1_id}
     w2.moveset = {m1_id}
@@ -176,7 +178,7 @@ def test_morale_work_rate_modifier(roster):
     w1_id, w1, w2_id, w2, _, roster_dict = roster
     
     m1_id = uuid4()
-    move = Move(name="Slam", damage=10, stamina_cost=5, heat_generation=20, move_type=MoveType.GRAPPLE)
+    move = Move(name="Slam", selling_burden=10, stamina_cost=5, heat_generation=20, move_type=MoveType.GRAPPLE)
     moves = {m1_id: move}
     w1.moveset = {m1_id}
     w2.moveset = {m1_id}

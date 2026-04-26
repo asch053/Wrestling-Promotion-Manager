@@ -1,12 +1,12 @@
 # Injury, Fatigue, and Medical Recovery - Executive Summary
 
-Wrestling is a physical toll. Every bump has a cost, and every main eventer has a breaking point. This feature introduces a persistent `fatigue` stat, a dynamic Injury Engine that can sideline stars, and a Medical Staff system that allows players to manage the health of their roster. "Workhorse" booking now carries the risk of career-altering injuries.
+Wrestling is a physical toll. Every bump has a cost, and every main eventer has a breaking point. This feature introduces a persistent `fatigue` stat, a dynamic Injury Engine that can sideline stars, and a Medical Staff system that allows players to manage the integrity of their roster. "Workhorse" booking now carries the risk of career-altering injuries.
 
 ## High-Level Requirements (HLR) Document
 
 **Feature ID**: F-010
 **Feature Name**: Injury, Fatigue, and Medical Recovery
-**Description**: Wrestlers track `fatigue` (0-100) which accumulates based on match intensity and duration. High fatigue degrades performance and spikes injury risk. Injuries can be Minor (stat penalties) or Major (sidelined). Players hire Medical Staff to accelerate recovery and reduce long-term damage.
+**Description**: Wrestlers track `fatigue` (0-100) which accumulates based on match intensity and duration. High fatigue degrades performance and spikes injury risk. Injuries can be Minor (stat penalties) or Major (sidelined). Players hire Medical Staff to accelerate recovery and reduce long-term selling_burden.
 
 **User Stories**:
 - As a Booker, I need to monitor the `fatigue` of my wrestlers. Constant main-eventing should wear them down.

@@ -1,6 +1,6 @@
 import pytest
 from uuid import uuid4
-from src.models.wrestler.wrestler import Wrestler, Alignment, InRingSkill, Psychology, Backstage, Popularity
+from src.models.wrestler.wrestler import Wrestler, KayfabeStatus, InRingSkill, Psychology, Backstage, Popularity
 from src.models.wrestler.faction import Faction
 from src.engine.relationship_engine import calculate_chemistry, apply_relationship
 from src.engine.faction_manager import get_bloat_penalty, can_join_faction
@@ -45,13 +45,13 @@ def test_relationship_chemistry(wrestlers):
     w_id1, w1, w_id2, w2, w_id3, w3, _ = wrestlers
     
     # Face vs Face (w1 vs w3)
-    assert w1.alignment == Alignment.FACE
-    assert w3.alignment == Alignment.FACE
+    assert w1.kayfabe_status == KayfabeStatus.FACE
+    assert w3.kayfabe_status == KayfabeStatus.FACE
     score = calculate_chemistry(w1, w3)
     assert score > 50
     
     # Face vs Heel (w1 vs w2)
-    assert w2.alignment == Alignment.HEEL
+    assert w2.kayfabe_status == KayfabeStatus.HEEL
     score2 = calculate_chemistry(w1, w2)
     assert score2 < 50
     
@@ -102,7 +102,7 @@ def test_tweener_faction_flexibility():
         backstage=Backstage(ego=30, professionalism=50),
         popularity=Popularity(hype=90, heat=80, pop=80)
     )
-    assert tweener.alignment == Alignment.TWEENER
+    assert tweener.kayfabe_status == KayfabeStatus.TWEENER
     
     leader = Wrestler(
         name="Leader",

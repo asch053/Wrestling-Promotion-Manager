@@ -2,18 +2,18 @@ import pytest
 from pydantic import ValidationError
 from uuid import uuid4
 from src.models.wrestler.moveset import Move, MoveType
-from src.models.wrestler.wrestler import Wrestler, Alignment, InRingSkill, Psychology, Backstage, Popularity
+from src.models.wrestler.wrestler import Wrestler, KayfabeStatus, InRingSkill, Psychology, Backstage, Popularity
 
 def test_create_valid_move():
     move = Move(
         name="Vertical Suplex",
-        damage=15,
+        selling_burden=15,
         stamina_cost=10,
         heat_generation=5,
         move_type=MoveType.GRAPPLE
     )
     assert move.name == "Vertical Suplex"
-    assert move.damage == 15
+    assert move.selling_burden == 15
     assert move.move_type == MoveType.GRAPPLE
 
 def test_create_valid_wrestler():
@@ -46,7 +46,7 @@ def test_move_invalid_enum():
     with pytest.raises(ValidationError):
         Move(
             name="Magic Missile",
-            damage=15,
+            selling_burden=15,
             stamina_cost=10,
             heat_generation=5,
             move_type="MAGIC" # Invalid
@@ -66,8 +66,8 @@ def test_duplicate_moveset_ids_handled():
     
     assert len(wrestler.moveset) == 1
 
-def test_dynamic_alignment():
-    # High Pop, low Heat = FACE
+def test_dynamic_kayfabe_status():
+    # Pop(80) - Heat(10) = 70 (> 20) -> FACE
     w = Wrestler(
         name="Face",
         in_ring=InRingSkill(strength=50, agility=50, stamina=50),
@@ -75,18 +75,21 @@ def test_dynamic_alignment():
         backstage=Backstage(ego=50, professionalism=50),
         popularity=Popularity(hype=50, heat=10, pop=80)
     )
-    assert w.alignment == Alignment.FACE
+    assert w.resonance_ratio == 70
+    assert w.kayfabe_status == KayfabeStatus.FACE
     
-    # High Heat, low Pop = HEEL
+    # Pop(20) - Heat(90) = -70 (< -20) -> HEEL
     w.popularity.heat = 90
     w.popularity.pop = 20
-    assert w.alignment == Alignment.HEEL
+    assert w.resonance_ratio == -70
+    assert w.kayfabe_status == KayfabeStatus.HEEL
     
-    # Close Pop/Heat with high Hype = TWEENER
+    # Pop(80) - Heat(70) = 10 (-20 to 20) -> TWEENER
     w.popularity.hype = 80
     w.popularity.pop = 80
     w.popularity.heat = 70
-    assert w.alignment == Alignment.TWEENER
+    assert w.resonance_ratio == 10
+    assert w.kayfabe_status == KayfabeStatus.TWEENER
 
 def test_opposing_metric_decay():
     from src.engine.match_simulator import apply_opposing_metric_decay

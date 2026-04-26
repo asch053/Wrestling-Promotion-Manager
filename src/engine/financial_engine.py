@@ -1,6 +1,6 @@
 from src.models.promotion.company import Company
 from src.models.promotion.event import Event, EventScale
-from src.models.wrestler.wrestler import Alignment
+from src.models.wrestler.wrestler import KayfabeStatus
 from src.engine.models.financial_report import FinancialReport
 from src.engine.championship_manager import calculate_saturation_penalty, get_champion_prestige
 from src.engine.dojo_engine import calculate_dojo_maintenance
@@ -8,6 +8,9 @@ from src.engine.stipulation_logic_handler import MatchStipulation, get_modifiers
 
 def process_event_finances(company: Company, event: Event,
                            stipulation: MatchStipulation = MatchStipulation.STANDARD) -> FinancialReport:
+    if company.game_state.current_day != 2:
+        raise PermissionError("Finances can only be processed on The Ledger (Day 2).")
+
     # Scale multipliers
     scale_multipliers = {
         EventScale.HOUSE_SHOW: 1.0,
@@ -35,7 +38,7 @@ def process_event_finances(company: Company, event: Event,
     merch_revenue = 0
     talent_merch_cut = 0
     for idx, w in enumerate(company.current_roster):
-        if w.alignment == Alignment.TWEENER:
+        if w.kayfabe_status == KayfabeStatus.TWEENER:
             base_merch = min(int(w.popularity.hype * 60), 4000)
         else:
             base_merch = int(w.popularity.hype * 50)

@@ -10,7 +10,7 @@ class MoveType(str, Enum):
 
 class Move(BaseModel):
     name: str
-    damage: int = Field(ge=0, le=100)
+    selling_burden: int = Field(ge=0, le=100)
     stamina_cost: int = Field(ge=0, le=100)
     heat_generation: int = Field(ge=0, le=100)
     move_type: MoveType

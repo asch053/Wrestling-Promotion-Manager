@@ -17,6 +17,8 @@ class Incident(BaseModel):
     description: str
 
 def generate_incidents(company: Company, roster_dict: Dict[UUID, Wrestler]) -> List[Incident]:
+    if company.game_state.current_day != 6:
+        raise PermissionError("Incidents can only be generated on Day 6.")
     incidents = []
     
     for w_id, w in roster_dict.items():

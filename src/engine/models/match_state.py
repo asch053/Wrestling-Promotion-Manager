@@ -3,7 +3,7 @@ from typing import Dict
 from uuid import UUID
 
 class WrestlerState(BaseModel):
-    health: int
+    integrity: int
     stamina: int
     momentum: int = 50
 

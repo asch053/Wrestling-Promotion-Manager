@@ -9,7 +9,7 @@
 | *DLR-5.2.1* | *FR-5.2.0* | Implement `Contract` Pydantic model with `appearance_fee: int`, `weekly_salary: int`, `merch_cut_percentage: float`. Add optional `contract` to `Wrestler`. | Verify successful instantiation of a Wrestler with a Contract. |
 | *DLR-5.3.1* | *FR-5.3.0* | Implement `EventScale` Enum (HOUSE_SHOW, TV_TAPING, PPV, MEGA_EVENT). Implement `Event` model containing scale, location, and financial totals. | Verify instantiation of Event. |
 | *DLR-5.4.1* | *FR-5.4.0* | `financial_engine.py`: Base Gate = `(Company Hype * 10) + (Company Excitement * 20)`. Scale multipliers: HS(1x), TV(2x), PPV(5x), MEGA(10x). Staleness penalty = `0.8` if location == prev_location. | Assert expected gate revenue based on specific injected stats. |
-| *DLR-5.4.2* | *FR-5.4.0* | **Merch Revenue (Fluid Alignment Aware)**: Iterate roster. Use `wrestler.alignment` (dynamic property). If `FACE` or `HEEL`: `w_merch = hype * 50` (high loyalty peak). If `TWEENER`: `w_merch = min(hype * 60, 4000)` (broader appeal, lower loyalty cap). Add `w_merch` to total. Add `w_merch * merch_cut_percentage` to `talent_merch_cut`. | Verify Tweener at 50 Hype generates 3000 merch (50*60) vs Face at 50 Hype generating 2500 (50*50). Verify Tweener at 100 Hype caps at 4000 vs Face at 100 Hype generating 5000. |
+| *DLR-5.4.2* | *FR-5.4.0* | **Merch Revenue (Fluid KayfabeStatus Aware)**: Iterate roster. Use `wrestler.kayfabe_status` (dynamic property). If `FACE` or `HEEL`: `w_merch = hype * 50` (high loyalty peak). If `TWEENER`: `w_merch = min(hype * 60, 4000)` (broader appeal, lower loyalty cap). Add `w_merch` to total. Add `w_merch * merch_cut_percentage` to `talent_merch_cut`. | Verify Tweener at 50 Hype generates 3000 merch (50*60) vs Face at 50 Hype generating 2500 (50*50). Verify Tweener at 100 Hype caps at 4000 vs Face at 100 Hype generating 5000. |
 | *DLR-5.5.1* | *FR-5.5.0* | Expenses: `Talent` = sum(fees). `Staging` = Scale (HS=$5k, TV=$15k, PPV=$50k, MEGA=$200k). `Travel` = 0 if same location, else $10k. `Overheads` = $5k + (len(past_events) * $100). | Assert expected expenses based on specific injected parameters. |
 | *DLR-5.6.1* | *FR-5.6.0* | The engine creates a `FinancialReport` and explicitly adds `net_profit` to `Company.bank_balance`. | Verify company bank balance changes by exactly `net_profit`. |
 
@@ -35,7 +35,7 @@
     - `class FinancialReport(BaseModel)`: Explicit dicts for `revenue_breakdown` and `expense_breakdown`.
 
 - **Logic Flow** (`financial_engine.py` -> `process_event_finances(company: Company, event: Event)`): 
-  1. **Calculate Merch**: For each wrestler, check `wrestler.alignment` (dynamic property). Apply alignment-specific multiplier and cap. Deduct `Merch * merch_cut_percentage` as the talent's cut.
+  1. **Calculate Merch**: For each wrestler, check `wrestler.kayfabe_status` (dynamic property). Apply kayfabe_status-specific multiplier and cap. Deduct `Merch * merch_cut_percentage` as the talent's cut.
   2. **Calculate Gate**: Determine Company Hype and Excitement. Apply `EventScale` multiplier. Check `Company.past_events[-1].location` for Staleness.
   3. **Calculate Expenses**: Sum Staging Base, Travel (if location changed), Overheads, and total Talent Cost (appearance fees + merch cuts).
   4. **Finalize**: Calculate Net Profit. Update `Company.bank_balance`. Append `Event` to `Company.past_events`. Return the `FinancialReport`.
@@ -45,7 +45,7 @@
 - **To The Booker**: 
   - The decaying algorithm in `Company` needs to loop backwards. E.g., `decay = 1.0`, `for item in reversed(list): decay *= 0.8; total += item.value * decay`.
   - Pydantic models might need `@computed_field` or properties for the dynamic calculations.
-  - **IMPORTANT**: The merch calculation must call `wrestler.alignment` which is now a dynamic `@property` based on Pop/Heat balance, not a stored field. This means merch revenue can shift event-to-event as wrestlers organically turn.
+  - **IMPORTANT**: The merch calculation must call `wrestler.kayfabe_status` which is now a dynamic `@property` based on Pop/Heat balance, not a stored field. This means merch revenue can shift event-to-event as wrestlers organically turn.
 - **To The Money Man**: 
   - The `bank_balance` should never drop below zero without triggering some sort of "Bankruptcy" flag in the future, but for this sprint, allowing negative balances is fine.
 

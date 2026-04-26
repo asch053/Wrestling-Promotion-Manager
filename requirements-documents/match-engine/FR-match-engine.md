@@ -11,12 +11,12 @@ The Match Simulation Engine is the beating heart of the Wrestling Promotion Mana
 **User Stories**:
 - As a Booker, I want the engine to read my `BookingSheet` and simulate the match so I can see if my booking decisions resulted in a 5-star classic or a dud.
 - As the Simulation Engine, I need to process the differences between `STRICT` matches (following the runsheet exactly) and `CALLED_IN_RING` matches (using RNG and wrestler stats to pick spots) to determine the flow.
-- As a Fan, I want to see a log of the match (e.g., "Hulk Hogan hits a Leg Drop for 20 damage!") so I can read the play-by-play.
+- As a Fan, I want to see a log of the match (e.g., "Hulk Hogan hits a Leg Drop for 20 selling_burden!") so I can read the play-by-play.
 
 **Functional Requirements**:
 - **FR-3.1.0 - Core Engine Loop**: Implement a `simulate_match(booking_sheet: BookingSheet, wrestlers: Dict[UUID, Wrestler], move_library: Dict[UUID, Move]) -> MatchReport` function.
 - **FR-3.2.0 - Turn Execution**: The engine must loop through "spots" until the match concludes. For `STRICT`, spots are pulled from the `expected_runsheet`. For `CALLED_IN_RING`, spots are dynamically selected from the executing wrestler's `moveset`.
-- **FR-3.3.0 - Damage & Stamina Tracking**: Track the current health and stamina of each wrestler. When a move is executed, deduct the `stamina_cost` from the attacker and apply `damage` to the defender.
+- **FR-3.3.0 - Damage & Stamina Tracking**: Track the current integrity and stamina of each wrestler. When a move is executed, deduct the `stamina_cost` from the attacker and apply `selling_burden` to the defender.
 - **FR-3.4.0 - Finish Execution**: The engine MUST end the match with the `designated_winner` going over. 
 - **FR-3.5.0 - The Match Report**: The engine must output a `MatchReport` object containing a `play_by_play` log (List of strings) and a `star_rating` (float from 0.0 to 5.0).
 
@@ -27,7 +27,7 @@ The Match Simulation Engine is the beating heart of the Wrestling Promotion Mana
 
 ## Logic Blueprint
 
-- **Stateless Execution**: The engine should instantiate a temporary `MatchState` object to track current health, stamina, and momentum for the duration of the match. The base `Wrestler` stats remain unchanged.
+- **Stateless Execution**: The engine should instantiate a temporary `MatchState` object to track current integrity, stamina, and momentum for the duration of the match. The base `Wrestler` stats remain unchanged.
 - **Star Rating Math**: 
   - Base rating starts at 2.0.
   - Add points based on the average `work_rate` of the participants.
@@ -43,7 +43,7 @@ The Match Simulation Engine is the beating heart of the Wrestling Promotion Mana
 
 ## Agent Assignments
 
-- **To Road Agent**: Draft the DLR. Define the `MatchReport` and `MatchState` Pydantic models. Design the step-by-step logic loop for `simulate_match` so The Booker knows exactly how to calculate damage and select moves. Define tests to ensure the designated winner always wins.
+- **To Road Agent**: Draft the DLR. Define the `MatchReport` and `MatchState` Pydantic models. Design the step-by-step logic loop for `simulate_match` so The Booker knows exactly how to calculate selling_burden and select moves. Define tests to ensure the designated winner always wins.
 - **To The Booker**: *(Future Step)* You will write the heavy math in `src/engine/match_simulator.py`. Be ready to utilize the `InRingSkill` and `Psychology` models you built previously.
 - **To The Fan Architect**: *(Future Step)* Prepare an API endpoint that triggers this engine and returns the `MatchReport` JSON.
 

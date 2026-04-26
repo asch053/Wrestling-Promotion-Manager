@@ -23,7 +23,7 @@ A successful wrestling promotion isn't just about drawing money—it's about man
 - **FR-5.4.0 - Revenue Calculation**: 
   - Gate Sales: Based on Company's `current_hype`, `current_excitement`, `event_scale`, and Location Staleness.
   - TV Deals: Based on Company's `current_hype`.
-  - Merchandise: Calculated individually per wrestler based on their `hype` and dynamic `Alignment`. `Faces` and `Heels` have high loyalty peaks (higher max sales). `Tweeners` appeal to a broader audience, selling more diverse gear (higher base multiplier) but have a lower loyalty peak cap.
+  - Merchandise: Calculated individually per wrestler based on their `hype` and dynamic `KayfabeStatus`. `Faces` and `Heels` have high loyalty peaks (higher max sales). `Tweeners` appeal to a broader audience, selling more diverse gear (higher base multiplier) but have a lower loyalty peak cap.
 - **FR-5.5.0 - Expense Calculation**:
   - Talent Costs: Sum of `appearance_fee` + (`Merch Revenue` * `merch_cut_percentage`).
   - Staging Costs: Exponentially higher for larger `event_scale`.

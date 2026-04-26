@@ -3,7 +3,7 @@ from uuid import UUID
 from src.models.promotion.company import Company
 from src.models.promotion.storyline import Storyline, PlannedOutcome
 from src.models.promotion.event import Event
-from src.models.wrestler.wrestler import Wrestler, Alignment
+from src.models.wrestler.wrestler import Wrestler, KayfabeStatus
 
 def decay_inactive_storylines(company: Company, event: Event):
     # Find active storylines featured in the event
@@ -17,7 +17,10 @@ def decay_inactive_storylines(company: Company, event: Event):
         if storyline.is_active and storyline.id not in featured_storylines:
             storyline.excitement = max(0, storyline.excitement - 10)
 
-def conclude_storyline(company: Company, roster_dict: Dict[UUID, Wrestler], storyline: Storyline):
+def execute_payoff(company: Company, roster_dict: Dict[UUID, Wrestler], storyline: Storyline):
+    if company.game_state.current_day != 4:
+        raise PermissionError("Storylines can only be payoff'd during the Thursday Creative Meeting (Day 4).")
+        
     if not storyline.is_active:
         return
         
@@ -36,7 +39,7 @@ def conclude_storyline(company: Company, roster_dict: Dict[UUID, Wrestler], stor
             # Destroy friendships with current Faces, create rivalries
             to_remove = []
             for friend_id, score in target.friendships.items():
-                if friend_id in roster_dict and roster_dict[friend_id].alignment == Alignment.FACE:
+                if friend_id in roster_dict and roster_dict[friend_id].kayfabe_status == KayfabeStatus.FACE:
                     to_remove.append(friend_id)
             for f_id in to_remove:
                 del target.friendships[f_id]
@@ -52,7 +55,7 @@ def conclude_storyline(company: Company, roster_dict: Dict[UUID, Wrestler], stor
             # Destroy friendships with current Heels, create rivalries
             to_remove = []
             for friend_id, score in target.friendships.items():
-                if friend_id in roster_dict and roster_dict[friend_id].alignment == Alignment.HEEL:
+                if friend_id in roster_dict and roster_dict[friend_id].kayfabe_status == KayfabeStatus.HEEL:
                     to_remove.append(friend_id)
             for f_id in to_remove:
                 del target.friendships[f_id]

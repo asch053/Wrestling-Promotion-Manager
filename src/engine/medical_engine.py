@@ -43,6 +43,8 @@ def roll_for_injury(wrestler: Wrestler) -> Optional[Injury]:
     return None
 
 def process_weekly_recovery(company: Company):
+    if company.game_state.current_day != 1:
+        raise PermissionError("Recovery can only be processed on Day 1.")
     recovery_boost = 1.0 + (company.medical_staff_level * 0.2)
     
     for wrestler in company.current_roster:

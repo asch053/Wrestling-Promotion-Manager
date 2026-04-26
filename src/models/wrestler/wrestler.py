@@ -5,7 +5,7 @@ from uuid import UUID
 from .contract import Contract
 from .injury import Injury
 
-class Alignment(str, Enum):
+class KayfabeStatus(str, Enum):
     FACE = "FACE"
     HEEL = "HEEL"
     TWEENER = "TWEENER"
@@ -58,11 +58,15 @@ class Wrestler(BaseModel):
     style: Optional[WrestlerStyle] = None
 
     @property
-    def alignment(self) -> Alignment:
-        margin = abs(self.popularity.pop - self.popularity.heat)
-        if margin <= 20 and self.popularity.hype >= 70:
-            return Alignment.TWEENER
-        elif self.popularity.pop >= self.popularity.heat:
-            return Alignment.FACE
+    def resonance_ratio(self) -> int:
+        return max(-100, min(100, self.popularity.pop - self.popularity.heat))
+
+    @property
+    def kayfabe_status(self) -> KayfabeStatus:
+        res = self.resonance_ratio
+        if res > 20:
+            return KayfabeStatus.FACE
+        elif res < -20:
+            return KayfabeStatus.HEEL
         else:
-            return Alignment.HEEL
+            return KayfabeStatus.TWEENER

@@ -7,7 +7,7 @@
 | *DLR-1.1.1* | *FR-1.1.0* | Implement `Wrestler` Pydantic model with `InRingSkill` (strength, agility, stamina), `Psychology` (work_rate, selling), and `Backstage` (ego, professionalism) nested models. | Verify successful instantiation of a `Wrestler` with all nested attribute groups. |
 | *DLR-1.1.2* | *FR-1.1.0* | All integer stats must use Pydantic `Field(ge=0, le=100)` validation to enforce 0-100 bounds. | Instantiate `Wrestler` with `ego=-1` and `stamina=105` and expect `ValidationError`. |
 | *DLR-1.2.1* | *FR-1.2.0* | Implement `MoveType` as a Python `Enum` (STRIKE, GRAPPLE, SUBMISSION, AERIAL, FINISHER). | Instantiate move with an invalid type string and expect `ValidationError`. |
-| *DLR-1.2.2* | *FR-1.2.0* | Implement `Move` Pydantic model with `damage`, `stamina_cost`, `heat_generation` (all integer `ge=0, le=100`), and `move_type` (MoveType). | Verify successful instantiation of a `Move` with valid stats and Enum type. |
+| *DLR-1.2.2* | *FR-1.2.0* | Implement `Move` Pydantic model with `selling_burden`, `stamina_cost`, `heat_generation` (all integer `ge=0, le=100`), and `move_type` (MoveType). | Verify successful instantiation of a `Move` with valid stats and Enum type. |
 | *DLR-1.3.1* | *FR-1.3.0* | The `Wrestler` model should contain a `moveset` attribute which is a `Set[UUID]` or `Set[str]` to store unique Move IDs and prevent duplication. | Assign the same Move ID twice to a wrestler's moveset and verify it is deduplicated. |
 
 ## Technical Specs & Architecture

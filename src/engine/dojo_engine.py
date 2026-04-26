@@ -8,11 +8,13 @@ def check_capacity(dojo: Dojo) -> bool:
     return len(dojo.students) < max_capacity
 
 
-def process_weekly_training(dojo: Dojo):
+def process_weekly_training(dojo: Dojo, current_day: int):
     """
     Apply weekly stat growth to all Dojo students.
     Growth targets are biased by the Dojo's style.
     """
+    if current_day != 7:
+        raise PermissionError("Training can only be processed on Day 7.")
     stat_increase = (dojo.manager.training_skill * 0.1) + (dojo.equipment_level * 0.05)
     gain = int(round(stat_increase))
 

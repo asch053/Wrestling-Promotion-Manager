@@ -1,4 +1,4 @@
-from src.models.wrestler.wrestler import Wrestler, Alignment
+from src.models.wrestler.wrestler import Wrestler, KayfabeStatus
 
 def calculate_chemistry(w_a: Wrestler, w_b: Wrestler) -> int:
     score = 50
@@ -7,8 +7,8 @@ def calculate_chemistry(w_a: Wrestler, w_b: Wrestler) -> int:
     score -= int((w_a.backstage.ego + w_b.backstage.ego) / 2)
     
     # Alignment Clash
-    alignments = {w_a.alignment, w_b.alignment}
-    if Alignment.FACE in alignments and Alignment.HEEL in alignments:
+    alignments = {w_a.kayfabe_status, w_b.kayfabe_status}
+    if KayfabeStatus.FACE in alignments and KayfabeStatus.HEEL in alignments:
         score -= 50
         
     # Similarity bonus
